@@ -1,0 +1,11 @@
+parameters:
+    # Raised deliberately, not aspirationally: each level up is a batch of real
+    # findings to work through, and a level whose errors are all ignored tells
+    # you nothing. Move it when the current one is clean.
+    level: 0
+
+    paths:
+        - src
+
+    bootstrapFiles:
+        - vendor/autoload.php

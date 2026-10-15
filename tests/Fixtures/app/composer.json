@@ -1,0 +1,11 @@
+{
+    "name": "laravel-optimized/test-app",
+    "autoload": {
+        "psr-4": { "App\\": "app/" }
+    },
+    "extra": {
+        "laravel": {
+            "dont-discover": ["ignored/package"]
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "name": "laravelopenpackages/laravel-optimized",
+    "description": "Laravel, optimized: a compiled request path for Laravel applications, with Laravel's own code as the fallback.",
+    "keywords": ["laravel", "performance", "optimize", "compiled", "routing", "eloquent"],
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/laravelopenpackages/laravel-optimized",
+    "authors": [
+        {
+            "name": "Zeeshan Ali",
+            "homepage": "https://github.com/ZeeshanX4",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/laravelopenpackages/laravel-optimized/issues",
+        "source": "https://github.com/laravelopenpackages/laravel-optimized"
+    },
+    "require": {
+        "php": "^8.3",
+        "laravel/framework": "^13.33"
+    },
+    "require-dev": {
+        "fakerphp/faker": "^1.23",
+        "phpstan/phpstan": "^2.2",
+        "phpunit/phpunit": "^12.0",
+        "symfony/cache": "^7.4|^8.0"
+    },
+    "suggest": {
+        "fakerphp/faker": "Required for model factories and the fake() helper (as in Laravel).",
+        "symfony/cache": "Required for the PSR-6 cache adapter, cache.psr6 (as in Laravel)."
+    },
+    "autoload": {
+        "psr-4": {
+            "LaravelOptimized\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "LaravelOptimized\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "@php vendor/phpunit/phpunit/phpunit --colors=always",
+        "analyse": "@php vendor/bin/phpstan analyse --memory-limit=1G"
+    },
+    "scripts-descriptions": {
+        "test": "Run the test suite.",
+        "analyse": "Run static analysis."
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

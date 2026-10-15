@@ -1,0 +1,36 @@
+{
+    "packages": [
+        {
+            "name": "acme/extension-package",
+            "version": "1.0.0",
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LaravelOptimized\\Tests\\Fixtures\\Package\\AcmeServiceProvider",
+                        "LaravelOptimized\\Tests\\Fixtures\\Package\\AcmeDeferredProvider",
+                        "LaravelOptimized\\Tests\\Fixtures\\Package\\AcmeWhenProvider",
+                        "LaravelOptimized\\Tests\\Fixtures\\Package\\AcmeExtensionServiceProvider"
+                    ],
+                    "aliases": {
+                        "Acme": "LaravelOptimized\\Tests\\Fixtures\\Package\\Acme"
+                    }
+                }
+            }
+        },
+        {
+            "name": "ignored/package",
+            "version": "1.0.0",
+            "extra": {
+                "laravel": {
+                    "providers": ["Ignored\\DoesNotExistProvider"]
+                }
+            }
+        },
+        {
+            "name": "plain/library",
+            "version": "1.0.0"
+        }
+    ],
+    "dev": true
+}
