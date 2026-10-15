@@ -3,7 +3,11 @@
 namespace LaravelOptimized\Foundation;
 
 use Illuminate\Container\Container;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\Application as BaseApplication;
+use Illuminate\Foundation\PackageManifest;
+use Illuminate\Foundation\ProviderRepository;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use LaravelOptimized\Components\Registry;
 use LaravelOptimized\Foundation\Configuration\ApplicationBuilder;
@@ -160,17 +164,24 @@ class Application extends BaseApplication
         }
     }
 
+    /**
+     * Laravel's registerConfiguredProviders(), without the component providers: their services
+     * are components. `app.providers` keeps Laravel's list, so a cached configuration boots stock
+     * Laravel too.
+     */
     public function registerConfiguredProviders()
     {
-        $config = $this->make('config');
+        $configured = array_diff((array) $this->make('config')->get('app.providers', []), Registry::PROVIDERS);
 
-        /** Component providers are skipped: their services are components. */
-        $config->set('app.providers', array_values(array_diff(
-            (array) $config->get('app.providers', []),
-            Registry::PROVIDERS
-        )));
+        $providers = (new Collection($configured))
+            ->partition(fn ($provider) => str_starts_with($provider, 'Illuminate\\'));
 
-        parent::registerConfiguredProviders();
+        $providers->splice(1, 0, [$this->make(PackageManifest::class)->providers()]);
+
+        (new ProviderRepository($this, new Filesystem, $this->getCachedServicesPath()))
+            ->load($providers->collapse()->toArray());
+
+        $this->fireAppCallbacks($this->registeredCallbacks);
     }
 
     public function register($provider, $force = false)

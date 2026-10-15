@@ -2,6 +2,14 @@
 
 Notable changes to Laravel Optimized.
 
+## v1.0.1
+
+- Switching an application back to stock Laravel works: a configuration cached by
+  `config:cache` keeps Laravel's full `app.providers` list, so stock Laravel boots from it and its
+  `optimize:clear` runs. Before, the cached list lacked the providers whose services are
+  components (cache, session, views, ...), and stock Laravel failed to boot until
+  `bootstrap/cache` was cleared by hand.
+
 ## v1.0.0
 
 The first release.

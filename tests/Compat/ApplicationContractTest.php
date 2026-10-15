@@ -2,10 +2,16 @@
 
 namespace LaravelOptimized\Tests\Compat;
 
+use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\CacheServiceProvider;
+use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 use Illuminate\Contracts\Foundation\Application as ApplicationContract;
 use Illuminate\Contracts\Foundation\CachesConfiguration;
 use Illuminate\Contracts\Foundation\CachesRoutes;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Foundation\Application as LaravelApplication;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
 use LaravelOptimized\Foundation\Application;
 use LaravelOptimized\Tests\TestCase;
 
@@ -101,6 +107,31 @@ class ApplicationContractTest extends TestCase
         $this->assertTrue($app->routesAreCached());
         $this->assertFileExists($app->getCachedServicesPath());
         $this->assertFileExists($app->getCachedPackagesPath());
+    }
+
+    /**
+     * Switching back: stock Laravel boots from the caches the optimized application wrote, with
+     * every provider of Laravel's, and its optimize:clear removes them.
+     */
+    public function test_stock_laravel_boots_from_the_caches_written_here(): void
+    {
+        $this->optimize();
+
+        $app = LaravelApplication::configure(basePath: self::APP)
+            ->withRouting(web: self::APP.'/routes/web.php', api: self::APP.'/routes/api.php')
+            ->withMiddleware(static function (Middleware $middleware): void {})
+            ->withExceptions(static function (Exceptions $exceptions): void {})
+            ->create();
+        $kernel = $app->make(ConsoleKernel::class);
+        $kernel->bootstrap();
+
+        $this->assertTrue($app->configurationIsCached());
+        $this->assertContains(CacheServiceProvider::class, $app['config']['app.providers']);
+        $this->assertInstanceOf(CacheManager::class, $app->make('cache'));
+
+        $this->assertSame(0, $kernel->call('optimize:clear'), $kernel->output());
+        $this->assertFileDoesNotExist($app->getCachedConfigPath());
+        $this->assertFileDoesNotExist($app->getCachedRoutesPath());
     }
 
     public function test_core_services_are_lazy(): void
